@@ -2,6 +2,8 @@
 #include "device.h"
 #include "types.h"
 
+#include "fonts/font_6x8.h"
+
 // system libs
 #include "stdbool.h"
 #include "stdint.h"
@@ -38,11 +40,10 @@ void delay(uint32_t ticks) {
 }
 
 int main(void) {
+	int i = 0;
   init_ports();
   while (true) {
-    display(1);
-    delay(1000000);
-    display(0);
-    delay(1000000);
+    display(1 << (i++ % 5));
+    delay(500000);
   }
 }

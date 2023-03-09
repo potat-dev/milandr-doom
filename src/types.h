@@ -35,9 +35,16 @@ typedef volatile unsigned long const vuc32;
 typedef volatile unsigned short const vuc16;
 typedef volatile unsigned char const vuc8;
 
-// ---------- //
+// font type
+
+typedef struct tag_FONT {
+  u32 Height; /* Высота символа в пикселях. */
+  u32 Width;  /* Ширина символа в пикселях. */
+  u32 Count; /* Число символов в шрифте минус один. */
+  u8* pData; /* Адрес таблицы с описанием символов шрифта. */
+} FONT;
+
 // Doom types //
-// ---------- //
 
 #define UID_null 0
 
@@ -68,6 +75,8 @@ EType uid_get_type(UID uid);
 
 struct Coords create_coords(double x, double y);
 uint8_t coords_distance(struct Coords* a, struct Coords* b);
+
+// helpers
 
 #ifndef min
 #define min(a, b) (((a) < (b)) ? (a) : (b))
