@@ -1,6 +1,6 @@
 // device libs
-#include "MDR32F9Qx_port.h"
-#include "MDR32F9Qx_rst_clk.h"
+#include "device.h"
+#include "types.h"
 
 // system libs
 #include "stdbool.h"
