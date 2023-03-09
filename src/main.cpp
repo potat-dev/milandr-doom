@@ -1,8 +1,7 @@
-// device libs
-#include "device.h"
-#include "types.h"
-
+// custom libs
+#include "display/lcd.h"
 #include "fonts/font_6x8.h"
+#include "types.h"
 
 // system libs
 #include "stdbool.h"
@@ -40,8 +39,19 @@ void delay(uint32_t ticks) {
 }
 
 int main(void) {
-	int i = 0;
+  int i = 0;
   init_ports();
+  LCD_INIT();
+  LCD_CLS();
+
+  SetCrystal((LCD_Crystal)0);
+  LCD_SET_PAGE(1);
+  for (; i < 10; i++) {
+    LCD_SET_ADDRESS(i * 2);
+    WriteLCD_Data(0xFF);
+  }
+
+  i = 0;
   while (true) {
     display(1 << (i++ % 5));
     delay(500000);

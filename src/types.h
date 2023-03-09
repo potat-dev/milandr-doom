@@ -1,6 +1,7 @@
 #ifndef __types_h__
 #define __types_h__
 
+#include "device.h"
 #include "stdint.h"
 
 typedef signed long s32;

@@ -4,3 +4,5 @@ RTE/
 
 JLinkLog.txt
 *.uvguix.*
+
+.vscode/
