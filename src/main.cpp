@@ -1,7 +1,7 @@
 // custom libs
+#include "display/graphics.h"
 #include "display/lcd.h"
 #include "fonts/font_6x8.h"
-#include "types.h"
 
 // system libs
 #include "stdbool.h"
@@ -34,8 +34,7 @@ void display(uint8_t n) {
 }
 
 void delay(uint32_t ticks) {
-  while (ticks--) {
-  }
+  while (ticks--);
 }
 
 int main(void) {
@@ -44,12 +43,18 @@ int main(void) {
   LCD_INIT();
   LCD_CLS();
 
+  // test low-level lcd commands
   SetCrystal((LCD_Crystal)0);
   LCD_SET_PAGE(1);
   for (; i < 10; i++) {
     LCD_SET_ADDRESS(i * 2);
     WriteLCD_Data(0xFF);
   }
+
+  // test high-level lcd methods
+  LCD_Line(127, 0, 0, 63);
+  LCD_Line(64, 32, 127, 63);
+  // LCD_Circle(64, 32, 16); // some fuckin bugs
 
   i = 0;
   while (true) {
