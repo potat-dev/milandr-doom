@@ -89,6 +89,34 @@ static u32 GetStatus(void) {
   return ret;
 }
 
+// --- LCD buffer --- //
+
+#define CRYSTAL_WIDTH 64
+#define PAGE_HEIGHT 8
+#define PAGE_COUNT 8
+#define CRYSTAL_COUNT 2
+
+// buffer struct
+typedef struct LCD_Buffer {
+  int8_t buffer[CRYSTAL_COUNT][PAGE_COUNT][CRYSTAL_WIDTH];
+  int8_t prev_buffer[CRYSTAL_COUNT][PAGE_COUNT][CRYSTAL_WIDTH];
+  int8_t changes[CRYSTAL_COUNT][CRYSTAL_WIDTH];  // each byte's bits indicates
+                                                 // changes in column's rows
+} LCD_Buffer;
+
+extern LCD_Buffer Buffer;
+
+void InitBuffer(void);
+void ClearBuffer(void);
+void SetBufferByte(int8_t addr, int8_t page, int8_t byte);
+void SetBufferPixel(int8_t x, int8_t y, int8_t pixel);
+void UpdateBufferChanges(void);
+void UpdatePrevBuffer(void);
+void DrawBuffer(bool clearCurrentBuffer);
+void DrawBuffer(void);
+
+// --- LCD buffer --- //
+
 #define WAIT_BUSY WaitStatus(BUSY)
 #define WAIT_RESET WaitStatus(RESET)
 #define WAIT_ON WaitStatus(ONOFF)

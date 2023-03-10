@@ -37,9 +37,8 @@ void delay(uint32_t ticks) {
   while (ticks--);
 }
 
-int main(void) {
+void draw(void) {
   int i = 0;
-  init_ports();
   LCD_INIT();
   LCD_CLS();
 
@@ -55,8 +54,30 @@ int main(void) {
   LCD_Line(127, 0, 0, 63);
   LCD_Line(64, 32, 127, 63);
   // LCD_Circle(64, 32, 16); // some fuckin bugs
+}
 
-  i = 0;
+void optimal_draw(void) {
+  int i, j;
+  InitBuffer();
+  LCD_INIT();
+  LCD_CLS();
+	
+	for (j = 0; j < 8; j++) {
+		for (i = 0; i < 8; i++) {
+			SetBufferByte(j * 16 + i * 2, j, 0xFF);
+		}
+		DrawBuffer(false);
+		delay(1000000);
+	}
+}
+
+int main(void) {
+  int i = 0;
+  init_ports();
+
+  // draw();
+  optimal_draw();
+  
   while (true) {
     display(1 << (i++ % 5));
     delay(500000);

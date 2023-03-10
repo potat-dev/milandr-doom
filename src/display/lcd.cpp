@@ -2,6 +2,8 @@
 
 #include "lcd.h"
 
+#include "string.h"
+
 /* Контекст подсистемы отрисовки */
 LCD_Crystal CurrentCrystal = LCD_CRYSTAL1; /* Текущий выбранный кристал */
 LCD_Method CurrentMethod; /* Текущий метод отрисовки */
@@ -67,9 +69,8 @@ u32 ReadLCD_Cmd(void) {
 }
 
 u32 ReadLCD_Data() {
-  u32 ret;
-  LCD_DATA(CurrentCrystal); /* Первое чтение - необходимо для получения
-                               корректных данных */
+  u32 ret = LCD_DATA(CurrentCrystal);
+  /* Первое чтение - необходимо для получения корректных данных */
   Pause();
   ret = LCD_DATA(CurrentCrystal);
   Pause();
@@ -112,3 +113,94 @@ void LCD_CLS(void) {
     LCD_ON;
   }
 }
+
+// --- LCD buffer --- //
+
+// global buffer
+LCD_Buffer Buffer;
+
+// init buffer (set all bytes to 0)
+void InitBuffer() {
+  memset(Buffer.buffer, 0, sizeof(Buffer.buffer));
+  memset(Buffer.prev_buffer, 0, sizeof(Buffer.prev_buffer));
+  memset(Buffer.changes, 0, sizeof(Buffer.changes));
+}
+
+// set whole byte in buffer
+void SetBufferByte(int8_t addr, int8_t page, int8_t byte) {
+  Buffer.buffer[addr / CRYSTAL_WIDTH][page % PAGE_COUNT][addr % CRYSTAL_WIDTH] =
+      byte;
+}
+
+// set pixel in buffer
+void SetBufferPixel(int8_t x, int8_t y, int8_t pixel) {
+  int8_t crystal = x / CRYSTAL_WIDTH;
+  int8_t page = y / PAGE_HEIGHT;
+  int8_t addr = x % CRYSTAL_WIDTH;
+  int8_t bit = y % PAGE_HEIGHT;  // which bit of byte to set
+  if (pixel) {
+    Buffer.buffer[crystal][page][addr] |= (1 << bit);
+  } else {
+    Buffer.buffer[crystal][page][addr] &= ~(1 << bit);
+  }
+}
+
+// function to update changes (optimal - use bit operations)
+void UpdateBufferChanges() {
+  int i, j, k;
+  for (i = 0; i < CRYSTAL_COUNT; i++) {
+    for (j = 0; j < CRYSTAL_WIDTH; j++) {
+      Buffer.changes[i][j] = 0;
+      for (k = 0; k < PAGE_COUNT; k++) {
+        if (Buffer.buffer[i][k][j] != Buffer.prev_buffer[i][k][j]) {
+          Buffer.changes[i][j] |= (1 << k);
+        }
+      }
+    }
+  }
+}
+
+void ClearBuffer(void) { memset(Buffer.buffer, 0, sizeof(Buffer.buffer)); }
+
+void UpdatePrevBuffer(bool clearBuffer) {
+  memcpy(Buffer.prev_buffer, Buffer.buffer, sizeof(Buffer.buffer));
+  if (clearBuffer) ClearBuffer();
+}
+
+void DrawBuffer(bool clearBuffer) {
+  int i, j, k, mask;
+  int next = CRYSTAL_WIDTH;
+  // update changes
+  UpdateBufferChanges();
+  // draw only changed bytes
+  for (i = 0; i < CRYSTAL_COUNT; i++) {
+    SetCrystal((LCD_Crystal)i);
+    WAIT_BUSY;
+    LCD_OFF;  // выключаем кристалл
+    LCD_SET_ADDRESS(0);
+    for (k = 0; k < PAGE_COUNT; k++) {
+      LCD_SET_PAGE(k);
+      mask = 1 << k;
+      for (j = 0; j < CRYSTAL_WIDTH; j++) {
+        // send data to crystal
+        // iterate through rows (0-7) and check if bit is set in changes[i][j]
+        if (Buffer.changes[i][j] & mask) {
+          // set address only if it's not in sequence
+          if (j != next) {
+            LCD_SET_ADDRESS(j);
+            next = j;
+          }
+          next++;
+          // send row data
+          WriteLCD_Data(Buffer.buffer[i][k][j]);
+        }
+      }
+    }
+    LCD_ON;  // не забываем включить кристалл обратно
+  }
+  UpdatePrevBuffer(clearBuffer);  // current buffer is now previous buffer
+}
+
+void DrawBuffer() { DrawBuffer(true); }
+
+// --- LCD buffer --- //
