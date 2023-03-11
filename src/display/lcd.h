@@ -115,6 +115,8 @@ void UpdatePrevBuffer(void);
 void DrawBuffer(bool clearCurrentBuffer);
 void DrawBuffer(void);
 
+int8_t GetBufferByte(int8_t addr, int8_t page);
+
 // --- LCD buffer --- //
 
 #define WAIT_BUSY WaitStatus(BUSY)

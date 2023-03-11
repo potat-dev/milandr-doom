@@ -1,7 +1,7 @@
 // custom libs
 #include "display/graphics.h"
 #include "display/lcd.h"
-#include "fonts/font_6x8.h"
+#include "display/text.h"
 
 // system libs
 #include "stdbool.h"
@@ -34,7 +34,8 @@ void display(uint8_t n) {
 }
 
 void delay(uint32_t ticks) {
-  while (ticks--);
+  while (ticks--)
+    ;
 }
 
 void draw(void) {
@@ -61,14 +62,54 @@ void optimal_draw(void) {
   InitBuffer();
   LCD_INIT();
   LCD_CLS();
-	
-	for (j = 0; j < 8; j++) {
-		for (i = 0; i < 8; i++) {
-			SetBufferByte(j * 16 + i * 2, j, 0xFF);
-		}
-		DrawBuffer(false);
-		delay(1000000);
-	}
+
+  for (j = 0; j < 8; j++) {
+    for (i = 0; i < 8; i++) {
+      SetBufferByte(j * 16 + i * 2, j, 0xFF);
+    }
+    DrawBuffer(false);
+    delay(1000000);
+  }
+}
+
+void buffer_graphics(void) {
+  int i;
+  InitBuffer();
+  LCD_INIT();
+  LCD_CLS();
+  // while (true) {
+  // cross lines
+  Buffer_Line(0, 0, 127, 63, true);
+  Buffer_Line(127, 0, 0, 63, true);
+  // corner circles
+  Buffer_Circle(0, 0, 16, true);
+  Buffer_Circle(0, 63, 16, true);
+  Buffer_Circle(127, 0, 16, true);
+  Buffer_Circle(127, 63, 16, true);
+  // center circles
+  Buffer_Circle(53, 32, 22, true);
+  Buffer_Circle(74, 31, 22, true);
+  // side lines
+  Buffer_Line(22, 11, 22, 52, true);
+  Buffer_Line(105, 11, 105, 52, true);
+  DrawBuffer();
+  delay(5000000);
+  // growing circles
+  for (i = 0; i < 32; i++) {
+    Buffer_Circle(53, 32, i, true);
+    Buffer_Circle(74, 31, i, true);
+    DrawBuffer();
+    delay(500000);
+  }
+  // }
+}
+
+void draw_text(void) {
+  Buffer_Line(8, 8, 127, 8, true);
+  Buffer_Line(8, 19, 127, 19, true);
+  Buffer_Line(8, 8, 8, 19, true);
+  LCD_PUTS(10, 10, "\xCF\xEE\xF2\xE0\xF2");  // Потат
+  DrawBuffer();
 }
 
 int main(void) {
@@ -76,8 +117,10 @@ int main(void) {
   init_ports();
 
   // draw();
-  optimal_draw();
-  
+  // optimal_draw();
+  buffer_graphics();
+  draw_text();
+
   while (true) {
     display(1 << (i++ % 5));
     delay(500000);

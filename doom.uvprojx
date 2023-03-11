@@ -413,9 +413,29 @@
           <GroupName>Source</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\main.c</FilePath>
+              <FileName>main.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\src\main.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Display</GroupName>
+          <Files>
+            <File>
+              <FileName>graphics.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\src\display\graphics.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>lcd.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\src\display\lcd.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>text.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\src\display\text.cpp</FilePath>
             </File>
           </Files>
         </Group>

@@ -134,6 +134,9 @@ void SetBufferByte(int8_t addr, int8_t page, int8_t byte) {
 
 // set pixel in buffer
 void SetBufferPixel(int8_t x, int8_t y, int8_t pixel) {
+  if (x < 0 || x >= CRYSTAL_WIDTH * CRYSTAL_COUNT || y < 0 ||
+      y >= PAGE_HEIGHT * PAGE_COUNT)
+    return;
   int8_t crystal = x / CRYSTAL_WIDTH;
   int8_t page = y / PAGE_HEIGHT;
   int8_t addr = x % CRYSTAL_WIDTH;
@@ -202,5 +205,10 @@ void DrawBuffer(bool clearBuffer) {
 }
 
 void DrawBuffer() { DrawBuffer(true); }
+
+int8_t GetBufferByte(int8_t addr, int8_t page) {
+  return Buffer
+      .buffer[addr / CRYSTAL_WIDTH][page % PAGE_COUNT][addr % CRYSTAL_WIDTH];
+}
 
 // --- LCD buffer --- //
