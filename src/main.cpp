@@ -38,46 +38,11 @@ void delay(uint32_t ticks) {
     ;
 }
 
-void draw(void) {
-  int i = 0;
-  LCD_INIT();
-  LCD_CLS();
-
-  // test low-level lcd commands
-  SetCrystal((LCD_Crystal)0);
-  LCD_SET_PAGE(1);
-  for (; i < 10; i++) {
-    LCD_SET_ADDRESS(i * 2);
-    WriteLCD_Data(0xFF);
-  }
-
-  // test high-level lcd methods
-  LCD_Line(127, 0, 0, 63);
-  LCD_Line(64, 32, 127, 63);
-  // LCD_Circle(64, 32, 16); // some fuckin bugs
-}
-
-void optimal_draw(void) {
-  int i, j;
-  InitBuffer();
-  LCD_INIT();
-  LCD_CLS();
-
-  for (j = 0; j < 8; j++) {
-    for (i = 0; i < 8; i++) {
-      SetBufferByte(j * 16 + i * 2, j, 0xFF);
-    }
-    DrawBuffer(false);
-    delay(1000000);
-  }
-}
-
 void buffer_graphics(void) {
   int i;
   InitBuffer();
   LCD_INIT();
   LCD_CLS();
-  // while (true) {
   // cross lines
   Buffer_Line(0, 0, 127, 63, true);
   Buffer_Line(127, 0, 0, 63, true);
@@ -101,7 +66,6 @@ void buffer_graphics(void) {
     DrawBuffer();
     delay(500000);
   }
-  // }
 }
 
 void draw_text(void) {
@@ -116,8 +80,6 @@ int main(void) {
   int i = 0;
   init_ports();
 
-  // draw();
-  // optimal_draw();
   buffer_graphics();
   draw_text();
 

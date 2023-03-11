@@ -3,8 +3,8 @@
 
 extern "C" {
 // device libs
-#include "MDR32F9Qx_port.h"
-#include "MDR32F9Qx_rst_clk.h"
+#include <MDR32F9Qx_port.h>
+#include <MDR32F9Qx_rst_clk.h>
 
 // custom libs
 #include "mdrlibs/ext_bus_cntrl.h"
