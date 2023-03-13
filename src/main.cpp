@@ -3,6 +3,8 @@
 #include "display/lcd.h"
 #include "display/text.h"
 
+#include "frames.h" // will not been included due to large size
+
 // system libs
 #include "stdbool.h"
 #include "stdint.h"
@@ -34,15 +36,11 @@ void display(uint8_t n) {
 }
 
 void delay(uint32_t ticks) {
-  while (ticks--)
-    ;
+  while (ticks--);
 }
 
 void buffer_graphics(void) {
   int i;
-  InitBuffer();
-  LCD_INIT();
-  LCD_CLS();
   // cross lines
   Buffer_Line(0, 0, 127, 63, true);
   Buffer_Line(127, 0, 0, 63, true);
@@ -64,7 +62,7 @@ void buffer_graphics(void) {
     Buffer_Circle(53, 32, i, true);
     Buffer_Circle(74, 31, i, true);
     DrawBuffer();
-    delay(500000);
+    delay(200000);
   }
 }
 
@@ -76,12 +74,25 @@ void draw_text(void) {
   DrawBuffer();
 }
 
+void draw_image(void) {
+  int i = 0;
+  while (true) {
+    Buffer_Sprite(22, 84, (const uint8_t *)frames[i++ % FRAMES_COUNT]);
+    DrawBuffer();
+    delay(350000);
+  }
+}
+
 int main(void) {
   int i = 0;
   init_ports();
+  InitBuffer();
+  LCD_INIT();
+  LCD_CLS();
 
   buffer_graphics();
   draw_text();
+  // draw_image();
 
   while (true) {
     display(1 << (i++ % 5));

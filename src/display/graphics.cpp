@@ -13,7 +13,6 @@ void Buffer_Line(u32 x1, u32 y1, u32 x2, u32 y2, bool c) {
   dy = y2 - y1;
   dx = x2 - x1;
   if (dx == 0 && dy == 0) {
-    // LCD_SetPixel(x1, y1, c); // use buffer
     SetBufferPixel(x1, y1, c);
     return;
   }
@@ -45,7 +44,6 @@ void Buffer_Line(u32 x1, u32 y1, u32 x2, u32 y2, bool c) {
   y = y1;
 
   for (i = 0;; i++) {
-    // LCD_SetPixel(x, y, c); // use buffer
     SetBufferPixel(x, y, c);
     if (i >= dx) break;
 
@@ -72,7 +70,6 @@ void Buffer_Circle(u32 xc, u32 yc, u32 r, bool c) {
   y = r;
   d = 3 - 2 * r;
   while (x <= y) {
-    // LCD_SetPixel(xc + x, yc + y, c); // use buffer
     SetBufferPixel(xc + x, yc + y, c);
     SetBufferPixel(xc + x, yc - y, c);
     SetBufferPixel(xc - x, yc + y, c);
@@ -88,5 +85,30 @@ void Buffer_Circle(u32 xc, u32 yc, u32 r, bool c) {
       y--;
     }
     x++;
+  }
+}
+
+void Buffer_Sprite(u32 x, u32 w, const u8 *data) {
+  // assume y = 0 and h = 64
+  // data is 8 * w bytes (8 rows, w columns)
+  // so, use SetBufferByte() to set 8 pixels at once
+  u32 i, j;
+  for (i = 0; i < w; i++) {
+    for (j = 0; j < 8; j++) {
+      SetBufferByte(x + i, j, data[i + j * w]);
+    }
+  }
+}
+
+void Buffer_Sprite(u32 row, u32 col, u32 h, u32 w, const u8 *data) {
+  // 0 <= row < 8
+  // 0 <= col < 128
+  // data is h * w bytes
+  // so, use SetBufferByte() to set 8 pixels at once
+  u32 i, j;
+  for (i = 0; i < w; i++) {
+    for (j = 0; j < h; j++) {
+      SetBufferByte(col + i, row + j, data[i + j * w]);
+    }
   }
 }
