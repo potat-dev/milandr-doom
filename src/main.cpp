@@ -1,30 +1,23 @@
-// custom libs
-#include "display/graphics.h"
-#include "display/lcd.h"
-#include "display/text.h"
+#define USE_MDR1986VE9x  // for IntelliSense only (auto defined by Keil uVision)
 
-#include "frames.h" // will not been included due to large size
+// custom libs
+#include "display/text.h"
+#include "setup.h"
 
 // system libs
 #include "stdbool.h"
 #include "stdint.h"
 
-PORT_InitTypeDef PORT_InitStructure;
+volatile uint32_t _delay_counter = 0;
 
-void init_ports(void) {
-  /* Enables the RTCHSE clock on PORTC and PORTD */
-  RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTC | RST_CLK_PCLK_PORTD, ENABLE);
+extern "C" void SysTick_Handler() {
+  if (_delay_counter) _delay_counter--;
+}
 
-  /* Configure PORTD pins 10..14 for output to switch LEDs on/off */
-  PORT_InitStructure.PORT_Pin =
-      (PORT_Pin_10 | PORT_Pin_11 | PORT_Pin_12 | PORT_Pin_13 | PORT_Pin_14);
-
-  PORT_InitStructure.PORT_OE = PORT_OE_OUT;
-  PORT_InitStructure.PORT_FUNC = PORT_FUNC_PORT;
-  PORT_InitStructure.PORT_MODE = PORT_MODE_DIGITAL;
-  PORT_InitStructure.PORT_SPEED = PORT_SPEED_SLOW;
-
-  PORT_Init(MDR_PORTD, &PORT_InitStructure);
+void delay_ms(uint32_t delay) {
+  _delay_counter = delay;
+  while (_delay_counter)
+    ;
 }
 
 void display(uint8_t n) {
@@ -36,7 +29,8 @@ void display(uint8_t n) {
 }
 
 void delay(uint32_t ticks) {
-  while (ticks--);
+  while (ticks--)
+    ;
 }
 
 void buffer_graphics(void) {
@@ -56,46 +50,46 @@ void buffer_graphics(void) {
   Buffer_Line(22, 11, 22, 52, true);
   Buffer_Line(105, 11, 105, 52, true);
   DrawBuffer();
-  delay(5000000);
+  // delay(5000000);
+  delay_ms(2000);
+
   // growing circles
   for (i = 0; i < 32; i++) {
     Buffer_Circle(53, 32, i, true);
     Buffer_Circle(74, 31, i, true);
     DrawBuffer();
-    delay(200000);
+    delay_ms(50);
   }
 }
 
 void draw_text(void) {
+  int i = 0, j, len = 16;
   Buffer_Line(8, 8, 127, 8, true);
   Buffer_Line(8, 19, 127, 19, true);
   Buffer_Line(8, 8, 8, 19, true);
   LCD_PUTS(10, 10, "\xCF\xEE\xF2\xE0\xF2");  // Потат
   DrawBuffer();
-}
+  delay_ms(1500);
 
-void draw_image(void) {
-  int i = 0;
   while (true) {
-    Buffer_Sprite(22, 84, (const uint8_t *)frames[i++ % FRAMES_COUNT]);
+    Buffer_Line(8, 8, 127, 8, true);
+    Buffer_Line(8, 19, 127, 19, true);
+    Buffer_Line(8, 8, 8, 19, true);
+    for (j = 0; j < len; j++)
+      LCD_PUTC(10 + j * CurrentFont->Width, 10, (i + j) % CurrentFont->Count);
+    i++;
     DrawBuffer();
-    delay(350000);
+    delay_ms(200);
   }
 }
 
 int main(void) {
-  int i = 0;
-  init_ports();
-  InitBuffer();
-  LCD_INIT();
-  LCD_CLS();
-
-  buffer_graphics();
-  draw_text();
-  // draw_image();
+  setup();
 
   while (true) {
-    display(1 << (i++ % 5));
-    delay(500000);
+    buffer_graphics();
+    delay_ms(1000);
+    draw_text();
+    delay_ms(1000);
   }
 }

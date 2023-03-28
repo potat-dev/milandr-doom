@@ -4,21 +4,19 @@
 
 #include "string.h"
 
-/* Контекст подсистемы отрисовки */
-LCD_Crystal CurrentCrystal = LCD_CRYSTAL1; /* Текущий выбранный кристал */
-LCD_Method CurrentMethod; /* Текущий метод отрисовки */
+// Контекст подсистемы отрисовки
+LCD_Crystal CurrentCrystal = LCD_CRYSTAL1;  // Текущий выбранный кристал
+LCD_Method CurrentMethod = MET_OR;  // Текущий метод отрисовки
 
-/* Порты LCD-кристаллов */
+// Порты LCD-кристаллов
 const LCD_Ports CrystalPorts[NUM_LCD_CRYSTALS] = {
-    /* Кристалл #1 */
-    {0x18100000,  /* LCD_DATA1 */
-     0x10100000}, /* LCD_CMD1  */
-    /* Кристалл #2 */
-    {0x18200000, /* LCD_DATA2 */
-     0x10200000} /* LCD_CMD2  */
+    {0x18100000,   // LCD_DATA1
+     0x10100000},  // LCD_CMD1
+    {0x18200000,   // LCD_DATA2
+     0x10200000}   // LCD_CMD2
 };
 
-/* Утилиты работы с LCD */
+// Утилиты работы с LCD
 
 void ResetLCD(void) {
   u32 i;
@@ -30,17 +28,17 @@ void ResetLCD(void) {
 }
 
 void InitPortLCD(void) {
-  PORTA->FUNC = 0x00005555; /* Main Function для DATA[7:0] */
-  PORTA->ANALOG = 0xFFFF;   /* Digital */
-  PORTA->PWR = 0x00005555;  /* Fast */
+  PORTA->FUNC = 0x00005555;  // Main Function для DATA[7:0]
+  PORTA->ANALOG = 0xFFFF;    // Digital
+  PORTA->PWR = 0x00005555;   // Fast
 
-  PORTE->FUNC = 0x00400500; /* Main Function для ADDR[20,21,27] */
-  PORTE->ANALOG = 0xFFFF;   /* Digital */
-  PORTE->PWR = 0x00400500;  /* Fast */
+  PORTE->FUNC = 0x00400500;  // Main Function для ADDR[20,21,27]
+  PORTE->ANALOG = 0xFFFF;    // Digital
+  PORTE->PWR = 0x00400500;   // Fast
 
-  PORTC->FUNC = 0x15504010; /* Main Function для RESET WE & CLOCK & KEYS*/
-  PORTC->ANALOG = 0xFFFF;   /* Digital */
-  PORTC->PWR = 0x0008C010;  /* Fast */
+  PORTC->FUNC = 0x15504010;  // Main Function для RESET WE & CLOCK & KEYS
+  PORTC->ANALOG = 0xFFFF;    // Digital
+  PORTC->PWR = 0x0008C010;   // Fast
 }
 
 void InitExtBus(void) { EXT_BUS_CNTRL->EXT_BUS_CONTROL = 0x0000A001; }
@@ -70,7 +68,7 @@ u32 ReadLCD_Cmd(void) {
 
 u32 ReadLCD_Data() {
   u32 ret = LCD_DATA(CurrentCrystal);
-  /* Первое чтение - необходимо для получения корректных данных */
+  // Первое чтение - необходимо для получения корректных данных
   Pause();
   ret = LCD_DATA(CurrentCrystal);
   Pause();
@@ -82,12 +80,11 @@ void LCD_INIT(void) {
 
   RST_CLK->PER_CLOCK = 0xFFFFFFFF;
 
-  InitPortLCD(); /* Инициализация портов внешней шины и выводов для работы с
-                    экраном */
-  InitExtBus();  /* Инициализация внешней шины */
-  ResetLCD();    /* Прошраммный сброс экрана */
+  InitPortLCD();  // Инициализация внешней шины и выводов для работы с экраном
+  InitExtBus();   // Инициализация внешней шины
+  ResetLCD();     // Прошраммный сброс экрана
 
-  /* Инициализация всех кристаллов */
+  // Инициализация всех кристаллов
   for (crystal = LCD_CRYSTAL1; crystal < NUM_LCD_CRYSTALS; crystal++) {
     SetCrystal((LCD_Crystal)crystal);
     WAIT_BUSY;
@@ -100,7 +97,7 @@ void LCD_INIT(void) {
 void LCD_CLS(void) {
   u32 i, j, crystal;
 
-  /* Очистка данных для всех кристаллов */
+  // Очистка данных для всех кристаллов
   for (crystal = LCD_CRYSTAL1; crystal < NUM_LCD_CRYSTALS; crystal++) {
     SetCrystal((LCD_Crystal)crystal);
     WAIT_BUSY;
@@ -114,7 +111,7 @@ void LCD_CLS(void) {
   }
 }
 
-// --- LCD buffer --- //
+// Утилиты работы с буфером
 
 // global buffer
 LCD_Buffer Buffer;
@@ -137,6 +134,7 @@ void SetBufferPixel(int8_t x, int8_t y, int8_t pixel) {
   if (x < 0 || x >= CRYSTAL_WIDTH * CRYSTAL_COUNT || y < 0 ||
       y >= PAGE_HEIGHT * PAGE_COUNT)
     return;
+
   int8_t crystal = x / CRYSTAL_WIDTH;
   int8_t page = y / PAGE_HEIGHT;
   int8_t addr = x % CRYSTAL_WIDTH;
@@ -168,6 +166,10 @@ void ClearBuffer(void) { memset(Buffer.buffer, 0, sizeof(Buffer.buffer)); }
 void UpdatePrevBuffer(bool clearBuffer) {
   memcpy(Buffer.prev_buffer, Buffer.buffer, sizeof(Buffer.buffer));
   if (clearBuffer) ClearBuffer();
+}
+
+void RestorePrevBuffer(void) {
+  memcpy(Buffer.buffer, Buffer.prev_buffer, sizeof(Buffer.buffer));
 }
 
 void DrawBuffer(bool clearBuffer) {
@@ -210,5 +212,3 @@ int8_t GetBufferByte(int8_t addr, int8_t page) {
   return Buffer
       .buffer[addr / CRYSTAL_WIDTH][page % PAGE_COUNT][addr % CRYSTAL_WIDTH];
 }
-
-// --- LCD buffer --- //
