@@ -50,7 +50,7 @@ void LCD_PUT_BYTE(u8 x, u8 y, u8 data) {
 
 // Вывод символов и строк текущим шрифтом
 
-void LCD_PUTC(u8 x, u8 y, u8 ch) {
+void Buffer_Char(u8 x, u8 y, u8 ch) {
   u32 i, j, line;
   uc8* sym;
 
@@ -61,6 +61,11 @@ void LCD_PUTC(u8 x, u8 y, u8 ch) {
   for (j = 0; j < line; j++)
     for (i = 0; i < CurrentFont->Width; i++)
       LCD_PUT_BYTE(x + i, y + j * 8, sym[i + CurrentFont->Width * j]);
+}
+
+void Buffer_Chars(u8 x, u8 y, uint8_t* str, u8 len) {
+  u32 i;
+  for (i = 0; i < len; i++) Buffer_Char(x + i * CurrentFont->Width, y, str[i]);
 }
 
 void int2string(u32 u, u8* str) {
@@ -76,12 +81,7 @@ void int2string(u32 u, u8* str) {
   }
 }
 
-void LCD_PUTS(u8 x, u8 y, uc8* str) {
+void Buffer_Text(u8 x, u8 y, char* str, u8 space) {
   u32 i;
-  for (i = 0; str[i]; i++) LCD_PUTC(x + i * CurrentFont->Width, y, str[i]);
-}
-
-void LCD_PUTSL(u8 x, u8 y, uc8* str, u8 len) {
-  u32 i;
-  for (i = 0; i < len; i++) LCD_PUTC(x + i * CurrentFont->Width, y, str[i]);
+  for (i = 0; str[i]; i++) Buffer_Char(x + i * (CurrentFont->Width + space), y, str[i]);
 }

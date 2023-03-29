@@ -21,9 +21,9 @@ extern FONT* CurrentFont;
 void LCD_PUT_BYTE(u8 x, u8 y, u8 data);
 
 // Вывод символов и строк текущим шрифтом
-void LCD_PUTC(u8 x, u8 y, u8 ch);
-void LCD_PUTS(u8 x, u8 y, uc8* str);
-void LCD_PUTSL(u8 x, u8 y, uc8* str, u8 len);
+void Buffer_Char(u8 x, u8 y, u8 ch);
+void Buffer_Chars(u8 x, u8 y, uint8_t* str, u8 len);
+void Buffer_Text(u8 x, u8 y, char* str, u8 space = 0);
 void int2string(u32 u, u8* str);
 
 // Макрокоманда вычисления начала размещения описания символа в таблице описания

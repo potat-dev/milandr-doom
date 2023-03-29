@@ -1,12 +1,13 @@
-#include "core_cm3.h"
-#include "display/graphics.h"
-#include "display/lcd.h"
+#include "display/display.h"
 
+extern "C" {
+#include "core_cm3.h"
 // imports for IntelliSense only (can be removed)
 // normally this file is auto-linked by the Keil uVision IDE
 #include "MDR32F9Qx_rst_clk.h"
 #include "MDR32Fx.h"
 #include "system_MDR32F9Qx.h"
+}
 
 #ifndef SETUP_H
 #define SETUP_H
@@ -56,9 +57,7 @@ void Init_Timer2() {
 void setup(void) {
   __disable_irq();
   init_ports();
-  InitBuffer();
-  LCD_INIT();
-  LCD_CLS();
+  setupDisplay();
 
   SysTick_Config(SystemCoreClock / 1000);
 

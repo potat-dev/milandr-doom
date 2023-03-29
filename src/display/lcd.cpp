@@ -208,6 +208,17 @@ void DrawBuffer(bool clearBuffer) {
 
 void DrawBuffer() { DrawBuffer(true); }
 
+void InvertBuffer() {
+  int i, j, k;
+  for (i = 0; i < CRYSTAL_COUNT; i++) {
+    for (j = 0; j < CRYSTAL_WIDTH; j++) {
+      for (k = 0; k < PAGE_COUNT; k++) {
+        Buffer.buffer[i][k][j] = ~Buffer.buffer[i][k][j];
+      }
+    }
+  }
+}
+
 int8_t GetBufferByte(int8_t addr, int8_t page) {
   return Buffer
       .buffer[addr / CRYSTAL_WIDTH][page % PAGE_COUNT][addr % CRYSTAL_WIDTH];

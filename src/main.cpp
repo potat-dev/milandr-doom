@@ -1,7 +1,7 @@
 #define USE_MDR1986VE9x  // for IntelliSense only (auto defined by Keil uVision)
 
 // custom libs
-#include "display/text.h"
+// #include "display/text.h"
 #include "setup.h"
 
 // system libs
@@ -67,7 +67,7 @@ void draw_text(void) {
   Buffer_Line(8, 8, 127, 8, true);
   Buffer_Line(8, 19, 127, 19, true);
   Buffer_Line(8, 8, 8, 19, true);
-  LCD_PUTS(10, 10, "\xCF\xEE\xF2\xE0\xF2");  // Потат
+  Buffer_Text(10, 10, "\xCF\xEE\xF2\xE0\xF2");  // Потат
   DrawBuffer();
   delay_ms(1500);
 
@@ -76,14 +76,15 @@ void draw_text(void) {
     Buffer_Line(8, 19, 127, 19, true);
     Buffer_Line(8, 8, 8, 19, true);
     for (j = 0; j < len; j++)
-      LCD_PUTC(10 + j * CurrentFont->Width, 10, (i + j) % CurrentFont->Count);
+      Buffer_Char(10 + j * CurrentFont->Width, 10,
+                  (i + j) % CurrentFont->Count);
     i++;
     DrawBuffer();
     delay_ms(200);
   }
 }
 
-int main(void) {
+int main_old(void) {
   setup();
 
   while (true) {
@@ -91,5 +92,50 @@ int main(void) {
     delay_ms(1000);
     draw_text();
     delay_ms(1000);
+  }
+}
+
+// --- new code --- //
+
+int main(void) {
+  int i, x, y, clip_height;
+  char a[2] = {'0', 0};
+
+  setup();
+
+  while (true) {
+    i = 0;
+
+    while (i < 8) {
+      fadeScreen(i++ % 8, true);
+      DrawBuffer();
+      delay_ms(200);
+    }
+
+    while (i < 16) {
+      y = i++;
+      x = y;
+      clip_height = max(0, min(y + BMP_GUN_HEIGHT, RENDER_HEIGHT) - y);
+      drawBitmap(x, y, bmp_gun_mask, BMP_GUN_WIDTH, clip_height, 0);
+      drawBitmap(x, y, bmp_gun_bits, BMP_GUN_WIDTH, clip_height, 1);
+      DrawBuffer();
+      delay_ms(150);
+    }
+
+    drawText(0, 0, "Hello, world!");
+    DrawBuffer(false);
+    delay_ms(1500);
+
+    drawText(20, 20, "lol kek cheburek =)");
+    DrawBuffer();
+    delay_ms(1500);
+
+    for (i = 0; i < 10; i++) {
+      Buffer_Text(0, 30, "Hello, world!", i);
+      a[0] = i + '0';
+      Buffer_Text(0, 40, a);
+      DrawBuffer();
+      delay_ms(200);
+    }
   }
 }

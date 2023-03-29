@@ -41,8 +41,8 @@ typedef struct tag_LCD_Ports {
 
 extern const LCD_Ports CrystalPorts[NUM_LCD_CRYSTALS];
 
-#define LCD_DATA(x) (*((vu32*)CrystalPorts[x].Data))
-#define LCD_CMD(x) (*((vu32*)CrystalPorts[x].Cmd))
+#define LCD_DATA(x) (*((vu32 *)CrystalPorts[x].Data))
+#define LCD_CMD(x) (*((vu32 *)CrystalPorts[x].Cmd))
 
 // Контекст подсистемы отрисовки
 extern LCD_Crystal CurrentCrystal;  // Текущий выбранный кристал
@@ -117,6 +117,7 @@ void UpdatePrevBuffer(void);
 void RestorePrevBuffer(void);
 void DrawBuffer(bool clearCurrentBuffer);
 void DrawBuffer(void);
+void InvertBuffer(void);
 
 int8_t GetBufferByte(int8_t addr, int8_t page);
 
