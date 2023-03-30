@@ -1,8 +1,11 @@
 #ifndef __types_h__
 #define __types_h__
 
+#include <math.h>
+#include <stdint.h>
+
+#include "constants.h"
 #include "device.h"
-#include "stdint.h"
 
 typedef signed long s32;
 typedef signed short s16;

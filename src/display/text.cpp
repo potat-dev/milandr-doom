@@ -19,33 +19,55 @@ void LCD_PUT_BYTE(u8 x, u8 y, u8 data) {
   shift_num_ex = 8 - shift_num;
 
   tmp_data = GetBufferByte(x, page);
-  SetBufferByte(x, page, tmp_data | (data << shift_num));
-  tmp_data = GetBufferByte(x, page + 1);
-  if (shift_num > 0)
-    SetBufferByte(x, page + 1, tmp_data | (data >> shift_num_ex));
 
-  /* --- TODO:
   switch (CurrentMethod) {
     case MET_OR:
-      WriteLCD_Data(tmp_data | (data << shift_num));
+      SetBufferByte(x, page, tmp_data | (data << shift_num));
       break;
     case MET_XOR:
-      WriteLCD_Data(tmp_data ^ (data << shift_num));
+      SetBufferByte(x, page, tmp_data ^ (data << shift_num));
       break;
     case MET_NOT_OR:
-      WriteLCD_Data(tmp_data | ((data ^ 0xFF) << shift_num));
+      SetBufferByte(x, page, tmp_data | ((data ^ 0xFF) << shift_num));
       break;
     case MET_NOT_XOR:
-      WriteLCD_Data(tmp_data ^ ((data ^ 0xFF) << shift_num));
+      SetBufferByte(x, page, tmp_data ^ ((data ^ 0xFF) << shift_num));
       break;
     case MET_AND:
-      WriteLCD_Data(tmp_data & (0xFF >> shift_num_ex) | (data << shift_num));
+      SetBufferByte(x, page,
+                    tmp_data & (0xFF >> shift_num_ex) | (data << shift_num));
       break;
     case MET_FIX:
-      WriteLCD_Data((data << shift_num));
+      SetBufferByte(x, page, (data << shift_num));
       break;
   }
-  */
+
+  // если символ не помещается в одну страницу
+  if (shift_num > 0) {
+    tmp_data = GetBufferByte(x, page + 1);
+
+    switch (CurrentMethod) {
+      case MET_OR:
+        SetBufferByte(x, page + 1, tmp_data | (data >> shift_num_ex));
+        break;
+      case MET_XOR:
+        SetBufferByte(x, page + 1, tmp_data ^ (data >> shift_num_ex));
+        break;
+      case MET_NOT_OR:
+        SetBufferByte(x, page + 1, tmp_data | ((data ^ 0xFF) >> shift_num_ex));
+        break;
+      case MET_NOT_XOR:
+        SetBufferByte(x, page + 1, tmp_data ^ ((data ^ 0xFF) >> shift_num_ex));
+        break;
+      case MET_AND:
+        SetBufferByte(x, page + 1,
+                      tmp_data & (0xFF << shift_num) | (data >> shift_num_ex));
+        break;
+      case MET_FIX:
+        SetBufferByte(x, page + 1, (data >> shift_num_ex));
+        break;
+    }
+  }
 }
 
 // Вывод символов и строк текущим шрифтом
@@ -83,5 +105,6 @@ void int2string(u32 u, u8* str) {
 
 void Buffer_Text(u8 x, u8 y, char* str, u8 space) {
   u32 i;
-  for (i = 0; str[i]; i++) Buffer_Char(x + i * (CurrentFont->Width + space), y, str[i]);
+  for (i = 0; str[i]; i++)
+    Buffer_Char(x + i * (CurrentFont->Width + space), y, str[i]);
 }

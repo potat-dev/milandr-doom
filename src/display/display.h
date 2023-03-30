@@ -5,10 +5,10 @@
 #include <cmath>
 
 #include "../constants.h"
+#include "../game/sprites.h"
 #include "../types.h"
 #include "graphics.h"
 #include "lcd.h"
-#include "sprites.h"
 #include "text.h"
 
 #ifndef __DISPLAY_H
