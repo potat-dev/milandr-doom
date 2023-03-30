@@ -1,4 +1,5 @@
 #include "display/display.h"
+#include "game/input.h"
 
 extern "C" {
 #include "core_cm3.h"
@@ -14,7 +15,7 @@ extern "C" {
 
 PORT_InitTypeDef PORT_InitStructure;
 
-void init_ports(void) {
+void init_leds(void) {
   // Enables the RTCHSE clock on PORTC and PORTD
   RST_CLK_PCLKcmd(RST_CLK_PCLK_PORTC | RST_CLK_PCLK_PORTD, ENABLE);
 
@@ -56,7 +57,8 @@ void Init_Timer2() {
 
 void setup(void) {
   __disable_irq();
-  init_ports();
+  init_leds();
+  init_keys();
   setupDisplay();
 
   SysTick_Config(SystemCoreClock / 1000);

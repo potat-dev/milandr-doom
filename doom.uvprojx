@@ -440,6 +440,26 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Game</GroupName>
+          <Files>
+            <File>
+              <FileName>types.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\src\game\types.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>entities.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\src\game\entities.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>input.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\src\game\input.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::Device</GroupName>
         </Group>
         <Group>
