@@ -703,6 +703,7 @@ void loopIntro() {
   // delay(1000);
   drawText(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT * .8, "PRESS FIRE", 1);
   // display.display();
+  DrawBuffer();
 
   // wait for fire
   while (!exit_scene) {
@@ -729,7 +730,7 @@ void loopGamePlay() {
 
     // Clear only the 3d view
     // memset(display_buf, 0, SCREEN_WIDTH * (RENDER_HEIGHT / 8));
-    LCD_CLS();
+    // LCD_CLS();
 
     // If the player is alive
     if (player.health > 0) {
@@ -854,6 +855,7 @@ void loopGamePlay() {
     // Draw the frame
     // display.invertDisplay(invert_screen);
     // display.display();
+    DrawBuffer();
 
     // Exit routine
     if (input_left() && input_right()) {
@@ -865,14 +867,12 @@ void loopGamePlay() {
 // arduino setup
 void init_setup(void) {
   setupDisplay();
-  init_keys();
+  // init_keys();
 }
 
 void loop(void) {
   uint8_t i;
-  // LCD_CLS();
-  // loopIntro();
-  loopGamePlay();
+
   switch (scene) {
     case INTRO: {
       loopIntro();
@@ -886,9 +886,10 @@ void loop(void) {
 
   // fade out effect
   for (i = 0; i < GRADIENT_COUNT; i++) {
-    // fadeScreen(i, false);
-    // display.display();
-    // delay(40);
+    fadeScreen(i, false);
+    DrawBuffer();
+    Delay(1000);
   }
+
   exit_scene = false;
 }

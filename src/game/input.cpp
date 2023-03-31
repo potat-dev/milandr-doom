@@ -10,10 +10,6 @@ void update_input(void) {
   input.fire = PORTC_BB[SELECT] == INPUT_STATE;
 }
 
-void init_keys(void) {
-  // TODO: initialize button ports (if needed)
-}
-
 bool input_up(void) { return input.up; }
 
 bool input_down(void) { return input.down; }

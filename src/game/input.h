@@ -25,7 +25,7 @@ extern Input input;
 
 // global input state
 void update_input(void);
-void init_keys(void);
+// void init_keys(void); - moved to setup.h
 
 // getters (TODO: remove)
 bool input_up(void);

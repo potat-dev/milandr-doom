@@ -31,7 +31,20 @@ void init_leds(void) {
   PORT_Init(MDR_PORTD, &PORT_InitStructure);
 }
 
-/* --- TODO: configure timers
+void init_keys(void) {
+  // TODO: initialize button ports (if needed)
+  // Configure PORTC pins 10..14 for input to handle joystick events
+  PORT_InitStructure.PORT_Pin =
+      (PORT_Pin_10 | PORT_Pin_11 | PORT_Pin_12 | PORT_Pin_13 | PORT_Pin_14);
+  PORT_InitStructure.PORT_OE = PORT_OE_IN;
+  PORT_InitStructure.PORT_FUNC = PORT_FUNC_PORT;
+  PORT_InitStructure.PORT_MODE = PORT_MODE_DIGITAL;
+  PORT_InitStructure.PORT_SPEED = PORT_SPEED_FAST;
+  PORT_InitStructure.PORT_GFEN = PORT_GFEN_ON;
+  PORT_Init(MDR_PORTC, &PORT_InitStructure);
+}
+
+// --- TODO: configure timers
 void Init_Timer1() {
   MDR_RST_CLK->PER_CLOCK |= RST_CLK_PCLK_TIMER1;
   MDR_RST_CLK->TIM_CLOCK |= RST_CLK_TIM_CLOCK_TIM1_CLK_EN;
@@ -43,6 +56,7 @@ void Init_Timer1() {
   MDR_TIMER1->CNTRL = TIMER_CNTRL_CNT_EN;
 }
 
+/*
 void Init_Timer2() {
   MDR_RST_CLK->PER_CLOCK |= RST_CLK_PCLK_TIMER2;
   MDR_RST_CLK->TIM_CLOCK |= RST_CLK_TIM_CLOCK_TIM2_CLK_EN;
@@ -55,6 +69,13 @@ void Init_Timer2() {
 }
 */
 
+extern "C" {
+void Timer1_IRQHandler() {
+  MDR_TIMER1->STATUS = 0;
+  update_input();
+}
+}
+
 void setup(void) {
   __disable_irq();
   init_leds();
@@ -62,6 +83,7 @@ void setup(void) {
   setupDisplay();
 
   SysTick_Config(SystemCoreClock / 1000);
+  Init_Timer1();
 
   __enable_irq();
 }

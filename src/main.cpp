@@ -5,6 +5,7 @@
 #include "setup.h"
 
 // system libs
+#include "game/doom.h"
 #include "stdbool.h"
 #include "stdint.h"
 
@@ -97,7 +98,7 @@ int main_old(void) {
 
 // --- new code --- //
 
-int main(void) {
+int main_old_2(void) {
   int i, x, y, clip_height;
   char a[2] = {'0', 0};
 
@@ -139,3 +140,22 @@ int main(void) {
     }
   }
 }
+
+/// --- doom code --- ///
+
+int main(void) {
+  setup();
+  while (true) loop();
+}
+
+// int main(void) {
+//   int i = 0;
+//   setup();
+//   while (true) {
+//     if (input_fire()) i++;
+//     Buffer_Char(0, 0, i % 256);
+//     Buffer_Text(0, 10, "Hello, world!");
+//     DrawBuffer();
+//     delay_ms(100);
+//   }
+// }
