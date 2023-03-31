@@ -1,3 +1,6 @@
+#ifndef SETUP_H
+#define SETUP_H
+
 #include "display/display.h"
 #include "game/input.h"
 
@@ -9,9 +12,6 @@ extern "C" {
 #include "MDR32Fx.h"
 #include "system_MDR32F9Qx.h"
 }
-
-#ifndef SETUP_H
-#define SETUP_H
 
 PORT_InitTypeDef PORT_InitStructure;
 

@@ -437,6 +437,11 @@
               <FileType>8</FileType>
               <FilePath>.\src\display\text.cpp</FilePath>
             </File>
+            <File>
+              <FileName>display.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\src\display\display.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -456,6 +461,11 @@
               <FileName>input.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>.\src\game\input.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>doom.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\src\game\doom.cpp</FilePath>
             </File>
           </Files>
         </Group>
