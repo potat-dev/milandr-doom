@@ -76,4 +76,6 @@
 
 #define HALF_HEIGHT 32
 
+#define STATS_YPOS 57
+
 #endif

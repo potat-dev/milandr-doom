@@ -76,8 +76,9 @@ uint8_t getBlockAt(const uint8_t level[], uint8_t x, uint8_t y) {
 
   // y is read in inverse order
   return level[(((LEVEL_HEIGHT - 1 - y) * LEVEL_WIDTH + x) / 2)] >>
-             (!(x % 2) * 4)  // displace part of wanted bits
-         & 0xF;              // mask wanted bits
+             (!(x % 2) * 4) &
+         0xF;
+  // displace part of wanted bits mask wanted bits
 }
 
 bool isSpawned(UID uid) {
@@ -672,27 +673,19 @@ void renderGun(uint8_t gun_pos, double amount_jogging) {
 
 // Only needed first time
 void renderHud() {
-  drawText(2, 58, "{}", 0);   // Health symbol
-  drawText(40, 58, "[]", 0);  // Keys symbol
+  Buffer_Text(6, STATS_YPOS, "\x03", 0);   // Health symbol
+  Buffer_Text(34, STATS_YPOS, "\x2a", 0);  // Keys symbol
   updateHud();
 }
 
 // Render values for the HUD
 void updateHud() {
-  // display.clearRect(12, 58, 15, 6);
-  // display.clearRect(50, 58, 5, 6);
-
-  drawTextInt(12, 58, player.health);
-  drawTextInt(50, 58, player.keys);
+  Buffer_Int(12, STATS_YPOS, player.health, 0);
+  Buffer_Int(50, STATS_YPOS, player.keys, 0);
 }
 
 // Debug stats
-void renderStats() {
-  // display.clearRect(58, 58, 70, 6);
-  // drawTextInt(114, 58, (int)(getActualFps()));
-  drawTextInt(82, 58, num_entities);
-  // drawText(94, 58, freeMemory());
-}
+void renderStats() { Buffer_Int(82, STATS_YPOS, num_entities, 0); }
 
 // Intro screen
 void loopIntro() {
@@ -700,9 +693,7 @@ void loopIntro() {
              (SCREEN_HEIGHT - BMP_LOGO_HEIGHT) / 3, bmp_logo_bits,
              BMP_LOGO_WIDTH, BMP_LOGO_HEIGHT, 1);
 
-  // delay(1000);
-  drawText(SCREEN_WIDTH / 2 - 25, SCREEN_HEIGHT * .8, "PRESS FIRE", 1);
-  // display.display();
+  Buffer_Text(33, SCREEN_HEIGHT * .85, "PRESS FIRE", 0);
   DrawBuffer();
 
   // wait for fire
@@ -713,7 +704,6 @@ void loopIntro() {
 
 void loopGamePlay() {
   bool gun_fired = false;
-  // bool walkSoundToggle = false;
   uint8_t gun_pos = 0;
   double rot_speed;
   double old_dir_x;
@@ -727,10 +717,6 @@ void loopGamePlay() {
   do {
     // fps();
     // Delay(10);
-
-    // Clear only the 3d view
-    // memset(display_buf, 0, SCREEN_WIDTH * (RENDER_HEIGHT / 8));
-    // LCD_CLS();
 
     // If the player is alive
     if (player.health > 0) {
@@ -775,19 +761,6 @@ void loopGamePlay() {
 
       view_height = abs(sin((double)millis() * JOGGING_SPEED)) * 6 * jogging;
 
-      /*
-      if(view_height > 5.9) {
-        if(sound == false) {
-          if(walkSoundToggle) {
-            // playSound(walk1_snd, WALK1_SND_LEN);
-            walkSoundToggle = false;
-          } else {
-            // playSound(walk2_snd, WALK2_SND_LEN);
-            walkSoundToggle = true;
-          }
-        }
-      }
-      */
       // Update gun
       if (gun_pos > GUN_TARGET_POS) {
         // Right after fire
@@ -815,13 +788,13 @@ void loopGamePlay() {
     }
 
     // Player movement
-    // if (abs(player.velocity) > 0.003) {
-    updatePosition(sto_level_1, &(player.pos),
-                   player.dir.x * player.velocity * delta,
-                   player.dir.y * player.velocity * delta, false);
-    //} else {
-    // player.velocity = 0;
-    //}
+    if (abs(player.velocity) > 0.003) {
+      updatePosition(sto_level_1, &(player.pos),
+                     player.dir.x * player.velocity * delta,
+                     player.dir.y * player.velocity * delta, false);
+    } else {
+      player.velocity = 0;
+    }
 
     // Update things
     updateEntities(sto_level_1);
@@ -842,6 +815,7 @@ void loopGamePlay() {
       }
     } else {
       renderStats();
+      renderHud();
     }
 
     // flash screen

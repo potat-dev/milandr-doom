@@ -4,5 +4,6 @@ RTE/
 
 JLinkLog.txt
 *.uvguix.*
-
-.vscode/
+.vscode/uv4.log.lock
+.vscode/uv4.log
+.vscode/keil-assistant.log

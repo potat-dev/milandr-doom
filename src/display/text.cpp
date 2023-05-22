@@ -108,3 +108,9 @@ void Buffer_Text(u8 x, u8 y, char* str, u8 space) {
   for (i = 0; str[i]; i++)
     Buffer_Char(x + i * (CurrentFont->Width + space), y, str[i]);
 }
+
+void Buffer_Int(u8 x, u8 y, u8 num, u8 space) {
+  char buf[4];  // 3 char + \0
+  sprintf(buf, "%d", num);
+  Buffer_Text(x, y, buf, space);
+}
