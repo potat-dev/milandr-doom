@@ -69,12 +69,12 @@ void Init_Timer2() {
 }
 */
 
-extern "C" {
-void Timer1_IRQHandler() {
-  MDR_TIMER1->STATUS = 0;
-  update_input();
-}
-}
+// extern "C" {
+// void Timer1_IRQHandler() {
+//   MDR_TIMER1->STATUS = 0;
+//   update_input();
+// }
+// }
 
 void setup(void) {
   __disable_irq();
@@ -83,7 +83,7 @@ void setup(void) {
   setupDisplay();
 
   SysTick_Config(SystemCoreClock / 1000);
-  Init_Timer1();
+  // Init_Timer1();
 
   __enable_irq();
 }

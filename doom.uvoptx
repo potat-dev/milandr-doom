@@ -137,7 +137,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>UL2CM3</Key>
-          <Name>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF01986VE9x -FS020000000 -FL0800 -FP0($$Device:MDR1986BE91$IDE\keil\FLASH\1986VE9x.FLM))</Name>
+          <Name>UL2CM3(-S0 -C0 -P0 )  -FN1 -FC1000 -FD20000000 -FF01986VE9x -FL0800 -FS020000000 -FP0($$Device:MDR1986BE91$IDE\keil\FLASH\1986VE9x.FLM)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint/>

@@ -64,7 +64,7 @@
 
 #define ENEMY_MELEE_DAMAGE 8
 #define ENEMY_FIREBALL_DAMAGE 20
-#define GUN_MAX_DAMAGE 15
+#define GUN_MAX_DAMAGE 35
 
 // display
 #define SCREEN_WIDTH 128

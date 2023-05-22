@@ -726,7 +726,7 @@ void loopGamePlay() {
 
   do {
     // fps();
-    Delay(10);
+    // Delay(10);
 
     // Clear only the 3d view
     // memset(display_buf, 0, SCREEN_WIDTH * (RENDER_HEIGHT / 8));

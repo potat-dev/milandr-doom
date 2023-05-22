@@ -21,7 +21,7 @@ struct Input {
   bool fire;
 };
 
-extern Input input;
+extern volatile Input input;
 
 // global input state
 void update_input(void);
